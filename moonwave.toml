@@ -17,7 +17,7 @@ projectName = "hindsight"
 title = "Hindsight"
 tagline = "Generalized hit detection and lag-compensated rollback for Roblox gun systems"
 url = "https://realencryptal.github.io"
-baseUrl = "/hindsight/"
+baseUrl = "/Hindsight/"
 onBrokenLinks = "warn"
 onBrokenMarkdownLinks = "warn"
 
