@@ -6,7 +6,7 @@
 
 A generalized hit-detection and lag-compensated rollback library for Roblox gun systems.
 
-**Docs:** https://realencryptal.github.io/hindsight/
+**Docs:** https://realencryptal.github.io/Hindsight/
 
 Hindsight provides two primitives:
 
@@ -52,13 +52,13 @@ local hit = world.rollback:queryRay(timestamp, origin, direction, 500)
 
 ## Documentation
 
-- [Getting started](https://realencryptal.github.io/hindsight/docs/getting-started) — end-to-end setup in under five minutes
-- [Concepts](https://realencryptal.github.io/hindsight/docs/concepts) — how the snapshot model, actor pool, and definitions fit together
-- [Wiring server and client](https://realencryptal.github.io/hindsight/docs/wiring) — what your scripts need to do
-- [Defining projectiles](https://realencryptal.github.io/hindsight/docs/defining-projectiles) — the definitions module
-- [Standalone rollback](https://realencryptal.github.io/hindsight/docs/rollback) — using snapshots without projectiles
-- [Configuration reference](https://realencryptal.github.io/hindsight/docs/configuration) — every `WorldConfig` knob
-- [API reference](https://realencryptal.github.io/hindsight/api/Hindsight) — generated from source
+- [Getting started](https://realencryptal.github.io/Hindsight/docs/getting-started) — end-to-end setup in under five minutes
+- [Concepts](https://realencryptal.github.io/Hindsight/docs/concepts) — how the snapshot model, actor pool, and definitions fit together
+- [Wiring server and client](https://realencryptal.github.io/Hindsight/docs/wiring) — what your scripts need to do
+- [Defining projectiles](https://realencryptal.github.io/Hindsight/docs/defining-projectiles) — the definitions module
+- [Standalone rollback](https://realencryptal.github.io/Hindsight/docs/rollback) — using snapshots without projectiles
+- [Configuration reference](https://realencryptal.github.io/Hindsight/docs/configuration) — every `WorldConfig` knob
+- [API reference](https://realencryptal.github.io/Hindsight/api/Hindsight) — generated from source
 
 A complete working server + client lives in [`example/`](example).
 
