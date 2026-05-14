@@ -7,6 +7,7 @@
 A generalized hit-detection and lag-compensated rollback library for Roblox gun systems.
 
 **Docs:** https://realencryptal.github.io/Hindsight/
+**Writeup:** https://www.encryptal.dev/devlog/hindsight
 
 Hindsight provides two primitives:
 
