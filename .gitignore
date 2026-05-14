@@ -1,0 +1,21 @@
+# Editor
+.vscode/**
+
+# Roblox build artifacts
+*.rbxlx
+*.rbxl
+*.rbxl.lock
+*.rbxmx
+*.rbxm
+
+sourcemap.json
+
+# Wally
+Packages/
+DevPackages/
+ServerPackages/
+
+# Moonwave / Docusaurus
+node_modules/
+build/
+.docusaurus/

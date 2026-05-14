@@ -1,0 +1,54 @@
+{
+	"name": "Hindsight",
+	"tree": {
+		"$className": "DataModel",
+
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+
+			"Hindsight": {
+				"$path": "src"
+			},
+
+			"Shared": {
+				"$path": "example/shared"
+			},
+
+			"DevPackages": {
+				"$path": "DevPackages"
+			}
+		},
+
+		"ServerScriptService": {
+			"Server": {
+				"$path": "example/server"
+			}
+		},
+
+		"StarterPlayer": {
+			"StarterPlayerScripts": {
+				"Client": {
+					"$path": "example/client"
+				}
+			}
+		},
+
+		"Workspace": {
+			"$properties": {
+				"FilteringEnabled": true
+			},
+
+			"Map": {
+				"$className": "Folder"
+			},
+
+			"Bullets": {
+				"$className": "Folder"
+			},
+
+			"Characters": {
+				"$className": "Folder"
+			}
+		}
+	}
+}

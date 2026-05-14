@@ -1,0 +1,57 @@
+title = "Hindsight"
+gitRepoUrl = "https://github.com/realencryptal/hindsight"
+gitSourceBranch = "main"
+changelog = false
+autoSectionPath = "src"
+
+[[classOrder]]
+section = "Public API"
+classes = ["Hindsight", "World", "Rollback"]
+
+[[classOrder]]
+section = "Configuration"
+classes = ["Defaults"]
+
+[docusaurus]
+projectName = "hindsight"
+title = "Hindsight"
+tagline = "Generalized hit detection and lag-compensated rollback for Roblox gun systems"
+url = "https://realencryptal.github.io"
+baseUrl = "/hindsight/"
+onBrokenLinks = "warn"
+onBrokenMarkdownLinks = "warn"
+
+[home]
+enabled = true
+includeReadme = false
+
+[[home.features]]
+title = "Server-authoritative"
+description = "Projectile simulation, rollback capture, and hit decisions all run on the server actor pool. Clients only render visuals."
+
+[[home.features]]
+title = "Lag-compensated"
+description = "Snapshot-based rollback re-creates each character's pose at the timestamp of a cast, so high-ping shots still hit where the shooter aimed."
+
+[[home.features]]
+title = "Parallel by default"
+description = "Casts dispatch to the least-loaded Actor in a user-sized pool. Every projectile steps in parallel context with no main-thread cost."
+
+[[home.features]]
+title = "Bring your own wiring"
+description = "Hindsight never scans the workspace, never loads folders, never spawns Actors on its own. Every input is passed in."
+
+[[navbar.items]]
+href = "https://github.com/realencryptal/hindsight"
+label = "GitHub"
+position = "right"
+
+[[navbar.items]]
+to = "/api/Hindsight"
+label = "API"
+position = "left"
+
+[[navbar.items]]
+to = "/docs/intro"
+label = "Docs"
+position = "left"
