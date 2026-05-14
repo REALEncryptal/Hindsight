@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[715],{4410:s=>{s.exports=JSON.parse('{"sourceUrl":"https://github.com/realencryptal/hindsight/blob/main","baseUrl":"/hindsight/","classOrder":[{"section":"Public API","classes":["Hindsight","World","Rollback"]},{"section":"Configuration","classes":["Defaults"]}],"apiCategories":[]}')}}]);
