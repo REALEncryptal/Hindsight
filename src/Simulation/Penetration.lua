@@ -5,9 +5,9 @@
 --> Penetration + ricochet decision logic, extracted from the per-frame
 --> simulation loop. Two responsibilities:
 --> 1. `tryRicochet` — decide whether a surface bounces the projectile and, if
----    so, mutate origin/speed/velocity in place.
+-->    so, mutate origin/speed/velocity in place.
 --> 2. `computeCompound` — gather every part that forms a single penetrable
----    medium (touching or near-touching parts merge), return the total cost.
+-->    medium (touching or near-touching parts merge), return the total cost.
 
 local Types = require(script.Parent.Parent.Types)
 

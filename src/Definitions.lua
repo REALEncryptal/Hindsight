@@ -4,7 +4,7 @@
 --> module, re-required on the main thread for the lookup). Two jobs:
 --> - Resolve `type` → ProjectileDefinition
 --> - Translate positional Output args from actors back into the typed ctx
----   table the user's callback expects
+-->   table the user's callback expects
 
 local Types = require(script.Parent.Types)
 
