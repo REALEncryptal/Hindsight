@@ -205,6 +205,6 @@ Press F5 in Studio with two play windows. Click on the other player. The dummy o
 
 - [Concepts](./concepts) — what's actually happening under the hood.
 - [Defining projectiles](./defining-projectiles) — every field on `ProjectileDefinition`, plus per-cast modifiers.
-- [Standalone rollback](./rollback) — using snapshots for hit-scan, melee, ability checks.
+- [Standalone rollback](./rollback) — using snapshots for melee, AoE, ability checks (or `world:hitscan` for stock single-ray hit-scans).
 - [Configuration](./configuration) — every option on `WorldConfig` / `RollbackConfig` / `PenetrationConfig`.
 - [API reference](/api/Hindsight) — generated reference.

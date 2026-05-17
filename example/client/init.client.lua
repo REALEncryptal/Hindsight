@@ -13,7 +13,9 @@ local Player = Players.LocalPlayer
 local PlayerScripts = Player:WaitForChild("PlayerScripts")
 local Mouse = Player:GetMouse()
 
-local SimulateEvent = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Events"):WaitForChild("Simulate") :: RemoteEvent
+local EventsFolder = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Events")
+local SimulateEvent = EventsFolder:WaitForChild("Simulate") :: RemoteEvent
+local LaserEvent = EventsFolder:WaitForChild("Laser") :: RemoteEvent
 local CharactersFolder = workspace:WaitForChild("Characters")
 local BulletsFolder = workspace:WaitForChild("Bullets")
 local definitionsModule = ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Definitions") :: ModuleScript
@@ -34,7 +36,12 @@ local world = Hindsight.createWorld({
 local Visuals = require(script:WaitForChild("visuals"))
 
 UserInputService.InputBegan:Connect(function(input: InputObject, gpe: boolean)
-	if gpe or input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+	if gpe then
+		return
+	end
+	local isBullet = input.UserInputType == Enum.UserInputType.MouseButton1
+	local isLaser = input.UserInputType == Enum.UserInputType.MouseButton2
+	if not (isBullet or isLaser) then
 		return
 	end
 
@@ -48,16 +55,30 @@ UserInputService.InputBegan:Connect(function(input: InputObject, gpe: boolean)
 	local direction = (Mouse.Hit.Position - origin).Unit
 	local timestamp = workspace:GetServerTimeNow()
 
-	SimulateEvent:FireServer(origin, direction, timestamp)
-	world:cast({
-		caster = Player,
-		type = "Bullet",
-		origin = origin,
-		direction = direction,
-		timestamp = timestamp,
-		visual = bulletVisual,
-	})
-	Visuals.ShowCast(origin, direction)
+	if isBullet then
+		SimulateEvent:FireServer(origin, direction, timestamp)
+		world:cast({
+			caster = Player,
+			type = "Bullet",
+			origin = origin,
+			direction = direction,
+			timestamp = timestamp,
+			visual = bulletVisual,
+		})
+		Visuals.ShowCast(origin, direction)
+	else
+		LaserEvent:FireServer(origin, direction, timestamp)
+		--> Local hitscan mirrors the server's resolution; client has no
+		--> rollback so onIntersection will not fire, but onImpact will.
+		world:hitscan({
+			caster = Player,
+			type = "Laser",
+			origin = origin,
+			direction = direction,
+			timestamp = timestamp,
+		})
+		Visuals.ShowCast(origin, direction)
+	end
 end)
 
 SimulateEvent.OnClientEvent:Connect(function(caster: Player, type: string, origin: Vector3, direction: Vector3)

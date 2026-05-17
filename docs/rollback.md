@@ -6,9 +6,11 @@ sidebar_position: 6
 
 The rollback half of Hindsight is exposed independently. You can use it to build:
 
-- Hit-scan weapons (no projectile body, instant ray test).
 - Melee or AoE checks ("who's inside my swing arc at the timestamp of this attack?").
 - Ability-validation gates ("was this character actually within line-of-sight 80 ms ago?").
+- Custom hit shapes the built-in [`World:hitscan`](/api/World#hitscan) doesn't cover (cones, multi-ray shotgun spreads with bespoke aggregation, etc).
+
+For a stock single-ray, lag-compensated hitscan with penetration and ricochet, prefer [`World:hitscan`](/api/World#hitscan) over rolling your own — it already does the work below.
 
 All of these go through the same [`Rollback`](/api/Rollback) object hanging off your World:
 

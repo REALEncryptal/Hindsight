@@ -6,10 +6,11 @@ sidebar_position: 1
 
 Hindsight is a hit-detection and lag-compensated rollback library for Roblox gun systems.
 
-It exposes two primitives:
+It exposes three primitives:
 
 1. **Projectile simulation** — a server-authoritative, parallelized projectile engine with penetration, ricochet, and snapshot-based hit detection.
-2. **Standalone rollback** — the snapshot system on its own. Query a ray, retrieve a character's interpolated pose, or build hit-scan / melee / ability checks on top of it without touching the projectile path.
+2. **Hitscan** — a single-frame, lag-compensated ray resolver. Same `ProjectileDefinition` shape and callback wiring as the projectile path; full ricochet and penetration parity.
+3. **Standalone rollback** — the snapshot system on its own. Query a ray, retrieve a character's interpolated pose, or build melee / ability checks on top of it without touching the cast path.
 
 Hindsight does **not** look anything up on its own. It does not auto-create folders, does not scan the workspace for characters, does not load projectile definitions from a folder. Every input is passed in.
 
@@ -18,7 +19,7 @@ Hindsight does **not** look anything up on its own. It does not auto-create fold
 ```toml
 # wally.toml
 [dependencies]
-Hindsight = "realencryptal/hindsight@^0.1"
+Hindsight = "realencryptal/hindsight@^0.2"
 ```
 
 ## Quick start
@@ -43,6 +44,15 @@ world:cast({
     direction = direction,
     timestamp = workspace:GetServerTimeNow(),
 })
+
+-- Or, for a single-frame hitscan:
+world:hitscan({
+    caster    = player,
+    type      = "Laser",
+    origin    = origin,
+    direction = direction,
+    timestamp = workspace:GetServerTimeNow(),
+})
 ```
 
 A complete server + client setup lives in [`example/`](https://github.com/realencryptal/hindsight/tree/main/example).
@@ -52,6 +62,6 @@ A complete server + client setup lives in [`example/`](https://github.com/realen
 - [Getting started](./getting-started) — end-to-end setup in under five minutes.
 - [Concepts](./concepts) — how the snapshot model, actor pool, and definitions fit together.
 - [Wiring](./wiring) — what server and client scripts need to do.
-- [Defining projectiles](./defining-projectiles) — the definitions module.
+- [Defining projectiles](./defining-projectiles) — the definitions module. Covers both projectile and hitscan ammo.
 - [Standalone rollback](./rollback) — using the snapshot store without projectiles.
 - [Configuration](./configuration) — every knob on [`WorldConfig`](/api/Hindsight#WorldConfig).

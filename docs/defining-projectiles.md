@@ -42,18 +42,19 @@ See the [`ProjectileDefinition`](/api/Hindsight#ProjectileDefinition) API page f
 
 | Field | Meaning |
 | --- | --- |
-| `velocity` | Initial speed in studs/second. |
-| `gravity` | World-space gravity vector applied every step. |
-| `lifetime` | Seconds before the projectile self-destructs. |
+| `velocity` | Initial speed in studs/second. Projectile path only. |
+| `gravity` | World-space gravity vector applied every step. Projectile path only. |
+| `lifetime` | Seconds before the projectile self-destructs. Projectile path only. |
 | `power` | Penetration budget. Spent against material hardness when crossing surfaces. |
 | `angle` | Maximum impact angle (in degrees) that allows a ricochet. `360` always bounces; `0` never does. |
 | `loss` | Speed lost per ricochet. |
+| `range` | Maximum scan distance in studs for the hitscan path. Ignored by `world:cast`. Defaults to `1024`. |
 | `collaterals` | If `true`, continues through players instead of stopping on the first intersection. |
 | `raycastFilter` | Optional `RaycastParams` overriding `world.defaultRaycastFilter` for this type. |
-| `filter` | **Parallel-context** per-character skip predicate. Read-only — no instance writes, no Humanoid reads. |
-| `onImpact` | Called on the main thread when the projectile hits world geometry. |
-| `onIntersection` | Called on the main thread when the projectile intersects a captured character. |
-| `onDestroyed` | Called on the main thread when the projectile expires or is fully consumed. |
+| `filter` | **Parallel-context** per-character skip predicate (projectile path) / main-thread predicate (hitscan path). Read-only — no instance writes, no Humanoid reads in parallel context. |
+| `onImpact` | Called on the main thread when the cast hits world geometry. |
+| `onIntersection` | Called on the main thread when the cast intersects a captured character. |
+| `onDestroyed` | Called on the main thread when the projectile expires or is fully consumed. **Projectile path only** — never fired by `world:hitscan`. |
 
 ## Why callbacks must live in the definitions module
 
@@ -120,3 +121,37 @@ Both behaviours fall out of three numbers on the definition:
 - **`loss`** is how much speed the projectile loses per ricochet.
 
 Ricochet additionally requires the surface to be hard enough — see [`PenetrationConfig.ricochetHardness`](/api/Hindsight#PenetrationConfig). Wood doesn't bounce bullets; concrete does.
+
+## Hitscan ammo
+
+The same definitions module feeds both cast paths. A definition aimed at [`world:hitscan`](/api/World#hitscan) sets `range`, leaves `velocity` / `gravity` / `lifetime` at any harmless values (they are ignored), and omits `onDestroyed` (the hitscan path never fires it):
+
+```lua
+local Laser: Hindsight.ProjectileDefinition = {
+    velocity = 0,             -- ignored by world:hitscan
+    gravity  = Vector3.zero,  -- ignored
+    lifetime = 0,             -- ignored
+    range    = 500,           -- max scan distance in studs
+    power    = 50,            -- penetration budget — same semantics as projectiles
+    angle    = 0,             -- no ricochet
+    loss     = 0,
+    collaterals    = false,
+    filter         = bulletFilter,
+    onImpact       = onImpact,
+    onIntersection = onIntersection,
+}
+```
+
+Then on the server:
+
+```lua
+world:hitscan({
+    caster    = player,
+    type      = "Laser",
+    origin    = origin,
+    direction = direction,
+    timestamp = rewindTime,
+})
+```
+
+[`world:hitscan`](/api/World#hitscan) resolves the ray on the main thread in a single call — no actor dispatch, no per-frame stepping. Server-side, it queries the same rollback store as the projectile path; client-side, character intersections are skipped (the client World has no rollback) and only world-geometry hits fire `onImpact`. Penetration and ricochet behave identically to the projectile path.

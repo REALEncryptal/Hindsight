@@ -59,4 +59,18 @@ local Bullet: Hindsight.ProjectileDefinition = {
 	onDestroyed = onDestroyed,
 }
 
-return { Bullet = Bullet }
+local Laser: Hindsight.ProjectileDefinition = {
+	velocity = 0,
+	gravity = Vector3.zero,
+	lifetime = 0,
+	range = 500,
+	power = 50,
+	angle = 0,
+	loss = 0,
+	collaterals = false,
+	filter = bulletFilter,
+	onImpact = onImpact,
+	onIntersection = onIntersection,
+}
+
+return { Bullet = Bullet, Laser = Laser }

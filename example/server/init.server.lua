@@ -30,6 +30,12 @@ local DebugRewind = Instance.new("RemoteEvent")
 DebugRewind.Name = "DebugRewind"
 DebugRewind.Parent = EventsFolder
 
+--> Hitscan smoke-test channel. Right-click on the client fires this; the
+--> server resolves it via `world:hitscan` instead of `world:cast`.
+local LaserEvent = Instance.new("RemoteEvent")
+LaserEvent.Name = "Laser"
+LaserEvent.Parent = EventsFolder
+
 local function rigNameForHumanoid(humanoid: Humanoid): string?
 	if humanoid.RigType == Enum.HumanoidRigType.R15 then
 		return "R15"
@@ -170,16 +176,18 @@ Players.PlayerAdded:Connect(function(player)
 	end)
 end)
 
-SimulateEvent.OnServerEvent:Connect(function(player: Player, origin: Vector3, direction: Vector3, timestamp: number)
+--> Shared validation for both cast paths. Returns the rewind time, or nil if
+--> the request should be rejected.
+local function validate(player: Player, origin: Vector3, timestamp: number): number?
 	local latency = workspace:GetServerTimeNow() - timestamp
 	if latency < 0 or latency > MAXIMUM_LATENCY then
-		return
+		return nil
 	end
 
 	local character = player.Character
 	local head = character and character:FindFirstChild("Head") :: BasePart?
 	if not head or not head:IsA("BasePart") then
-		return
+		return nil
 	end
 	--> Split the origin check on horizontal vs vertical. Horizontal stays
 	--> tight (lateral teleport detection); vertical is loose because jumps,
@@ -189,12 +197,32 @@ SimulateEvent.OnServerEvent:Connect(function(player: Player, origin: Vector3, di
 	local horizontal = Vector3.new(offset.X, 0, offset.Z).Magnitude
 	local vertical = math.abs(offset.Y)
 	if horizontal > 5 or vertical > 20 then
-		warn(`{player} is too far from the projectile origin.`)
-		return
+		warn(`{player} is too far from the cast origin.`)
+		return nil
 	end
 
-	local rewindOffset = player:GetNetworkPing() + INTERPOLATION
-	local rewindTime = timestamp - rewindOffset
+	return timestamp - (player:GetNetworkPing() + INTERPOLATION)
+end
+
+LaserEvent.OnServerEvent:Connect(function(player: Player, origin: Vector3, direction: Vector3, timestamp: number)
+	local rewindTime = validate(player, origin, timestamp)
+	if not rewindTime then
+		return
+	end
+	world:hitscan({
+		caster = player,
+		type = "Laser",
+		origin = origin,
+		direction = direction,
+		timestamp = rewindTime,
+	})
+end)
+
+SimulateEvent.OnServerEvent:Connect(function(player: Player, origin: Vector3, direction: Vector3, timestamp: number)
+	local rewindTime = validate(player, origin, timestamp)
+	if not rewindTime then
+		return
+	end
 	SimulateEvent:FireAllClients(player, "Bullet", origin, direction)
 	world:cast({
 		caster = player,
@@ -218,7 +246,7 @@ SimulateEvent.OnServerEvent:Connect(function(player: Player, origin: Vector3, di
 		end
 		if #entries > 0 then
 			local meta = {
-				rewindOffsetMs = rewindOffset * 1000,
+				rewindOffsetMs = (timestamp - rewindTime) * 1000,
 				rewindTime = rewindTime,
 				serverTime = workspace:GetServerTimeNow(),
 			}

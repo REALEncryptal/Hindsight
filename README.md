@@ -9,10 +9,11 @@ A generalized hit-detection and lag-compensated rollback library for Roblox gun 
 **Docs:** https://realencryptal.github.io/Hindsight/
 **Writeup:** https://www.encryptal.dev/devlog/hindsight
 
-Hindsight provides two primitives:
+Hindsight provides three primitives:
 
 1. **Projectile simulation** — a server-authoritative, parallelized projectile engine with penetration, ricochet, and snapshot-based hit detection. Same shape as a casting library, but every wiring decision (actors, containers, projectile definitions, rig hitboxes) is supplied by the caller through code.
-2. **Standalone rollback** — the snapshot system is exposed on its own. Query a ray, retrieve a character's interpolated pose, or build hit-scan / melee / ability checks on top of it without touching the projectile path.
+2. **Hitscan** — a single-frame, lag-compensated ray resolver. Reuses the same `ProjectileDefinition` and callback wiring as the projectile path; full ricochet and penetration parity. Runs on the main thread.
+3. **Standalone rollback** — the snapshot system is exposed on its own. Query a ray, retrieve a character's interpolated pose, or build melee / ability checks on top of it without touching the cast path.
 
 
 ## Install
@@ -20,7 +21,7 @@ Hindsight provides two primitives:
 ```toml
 # wally.toml
 [dependencies]
-Hindsight = "realencryptal/hindsight@^0.1"
+Hindsight = "realencryptal/hindsight@^0.2"
 ```
 
 ## Quick reference
@@ -42,6 +43,15 @@ world.rollback:autoCapturePlayers()
 world:cast({
     caster    = player,
     type      = "Bullet",
+    origin    = origin,
+    direction = direction,
+    timestamp = workspace:GetServerTimeNow(),
+})
+
+-- Single-frame hitscan (server-side: lag-compensated; client-side: world-only):
+world:hitscan({
+    caster    = player,
+    type      = "Laser",
     origin    = origin,
     direction = direction,
     timestamp = workspace:GetServerTimeNow(),
